@@ -16,7 +16,6 @@ export default class HttpManager {
 
   public static createAuthAxios(
     url: string,
-    tokenHandler: () => string,
     options: InitialOptions,
   ): AxiosInstance {
     const _axiosInstance = axios.create({
@@ -33,10 +32,6 @@ export default class HttpManager {
           options.request.currentLanguage,
         ),
     )
-    _axiosInstance.interceptors.request.use(
-      (axiosRequestConfig: InternalAxiosRequestConfig) =>
-        this.tokenRequestInterceptor(axiosRequestConfig, tokenHandler),
-    )
 
     /** Response Interceptor */
     _axiosInstance.interceptors.response.use(
@@ -50,7 +45,7 @@ export default class HttpManager {
 
   public static createSecureAxios(
     url: string,
-    tokenHandler: () => string,
+    tokenHandler: () => string | null,
     options: InitialOptions,
   ): AxiosInstance {
     const _axiosInstance = axios.create({
@@ -94,16 +89,18 @@ export default class HttpManager {
     currentLanguage?: () => string,
   ): InternalAxiosRequestConfig {
     const language = currentLanguage?.call(this) ?? this.defaultLanguage
-    axiosRequestConfig.headers['x-language'] = language
+    axiosRequestConfig.headers['X-Language'] = language
     return axiosRequestConfig
   }
 
   private static tokenRequestInterceptor(
     axiosRequestConfig: InternalAxiosRequestConfig,
-    tokenHandler: () => string,
+    tokenHandler: () => string | null,
   ): InternalAxiosRequestConfig {
     const token = tokenHandler()
-    axiosRequestConfig.headers['Authorization'] = `Bearer ${token}`
+    if (token) {
+      axiosRequestConfig.headers['Authorization'] = `Bearer ${token}`
+    }
     return axiosRequestConfig
   }
 
