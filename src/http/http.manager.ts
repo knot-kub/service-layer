@@ -6,7 +6,7 @@ import axios, {
 } from 'axios'
 import {
   ErrorResponseFunction,
-  InitialOptions,
+  InterceptorOptions,
   ResponseOptions,
   SuccessResponseFunction,
 } from './http.interface'
@@ -14,13 +14,14 @@ import {
 export default class HttpManager {
   private static defaultLanguage = 'en'
 
-  public static createAuthAxios(
+  public static createPublicAxios(
     url: string,
-    options: InitialOptions,
+    timeout: number,
+    options: InterceptorOptions,
   ): AxiosInstance {
     const _axiosInstance = axios.create({
       baseURL: url,
-      timeout: 20 * 1000,
+      timeout,
     })
 
     /** Request Interceptor */
@@ -43,14 +44,14 @@ export default class HttpManager {
     return _axiosInstance
   }
 
-  public static createSecureAxios(
+  public static createPrivateAxios(
     url: string,
-    tokenHandler: () => string | null,
-    options: InitialOptions,
+    timeout: number,
+    options: InterceptorOptions,
   ): AxiosInstance {
     const _axiosInstance = axios.create({
       baseURL: url,
-      timeout: 20 * 1000,
+      timeout,
     })
 
     /** Request Interceptor */
@@ -64,7 +65,10 @@ export default class HttpManager {
     )
     _axiosInstance.interceptors.request.use(
       (axiosRequestConfig: InternalAxiosRequestConfig) =>
-        this.tokenRequestInterceptor(axiosRequestConfig, tokenHandler),
+        this.tokenRequestInterceptor(
+          axiosRequestConfig,
+          options.request.tokenHandler,
+        ),
     )
 
     /** Response Interceptor */

@@ -1,12 +1,14 @@
 import { HttpStatusCode, AxiosResponse } from 'axios'
+import { AuthService, UserService } from '../services'
 
-export interface InitialOptions {
+export interface InterceptorOptions {
   request: RequestOptions
   response: ResponseOptions
 }
 
 export interface RequestOptions {
   currentLanguage?: () => string
+  tokenHandler: () => string | null
 }
 
 export type ResponseOptions = ErrorResponseOptions & SuccessResponseOptions
@@ -33,3 +35,19 @@ export type SuccessHttpStatusCode =
 
 export type SuccessResponseFunction = (response: AxiosResponse) => void
 export type ErrorResponseFunction = (error: any) => void
+
+export interface InstantiateOptions {
+  private: InstantiateOption
+  public: InstantiateOption
+}
+
+export interface InstantiateOption {
+  host: string
+  timeout: number
+  interceptorOptions: InterceptorOptions
+}
+
+export interface Services {
+  authService: AuthService
+  userService: UserService
+}
