@@ -14,37 +14,7 @@ import {
 export default class HttpManager {
   private static defaultLanguage = 'en'
 
-  public static createPublicAxios(
-    url: string,
-    timeout: number,
-    options: InterceptorOptions,
-  ): AxiosInstance {
-    const _axiosInstance = axios.create({
-      baseURL: url,
-      timeout,
-    })
-
-    /** Request Interceptor */
-    _axiosInstance.interceptors.request.use(this.basicRequestInterceptor)
-    _axiosInstance.interceptors.request.use(
-      (axiosRequestConfig: InternalAxiosRequestConfig) =>
-        this.languageRequestInterceptor(
-          axiosRequestConfig,
-          options.request.currentLanguage,
-        ),
-    )
-
-    /** Response Interceptor */
-    _axiosInstance.interceptors.response.use(
-      (response: AxiosResponse) =>
-        this.successResponseInterceptor(response, options.response),
-      (error: any) => this.errorResponseInterceptor(error, options.response),
-    )
-
-    return _axiosInstance
-  }
-
-  public static createPrivateAxios(
+  public static createAxios(
     url: string,
     timeout: number,
     options: InterceptorOptions,
@@ -99,9 +69,9 @@ export default class HttpManager {
 
   private static tokenRequestInterceptor(
     axiosRequestConfig: InternalAxiosRequestConfig,
-    tokenHandler: () => string | null,
+    tokenHandler?: () => string | null,
   ): InternalAxiosRequestConfig {
-    const token = tokenHandler()
+    const token = tokenHandler?.call(this)
     if (token) {
       axiosRequestConfig.headers['Authorization'] = `Bearer ${token}`
     }

@@ -8,7 +8,7 @@ export interface InterceptorOptions {
 
 export interface RequestOptions {
   currentLanguage?: () => string
-  tokenHandler: () => string | null
+  tokenHandler?: () => string
 }
 
 export type ResponseOptions = ErrorResponseOptions & SuccessResponseOptions
@@ -48,6 +48,6 @@ export interface InstantiateOption {
 }
 
 export interface Services {
-  authService: AuthService
-  userService: UserService
+  auth: AuthService
+  user: UserService
 }

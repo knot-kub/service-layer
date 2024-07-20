@@ -14,12 +14,12 @@ export class HttpClient {
 
   constructor() {
     // instantiate singleton instance of axios
-    this._publicAxios = HttpManager.createPublicAxios(
+    this._publicAxios = HttpManager.createAxios(
       HttpClient.instantiateOptions.public.host,
       HttpClient.instantiateOptions.public.timeout,
       HttpClient.instantiateOptions.public.interceptorOptions,
     )
-    this._privateAxios = HttpManager.createPublicAxios(
+    this._privateAxios = HttpManager.createAxios(
       HttpClient.instantiateOptions.private.host,
       HttpClient.instantiateOptions.private.timeout,
       HttpClient.instantiateOptions.private.interceptorOptions,
@@ -27,8 +27,8 @@ export class HttpClient {
 
     // instantiate singleton instance of services
     this._services = {
-      authService: new AuthService(this._publicAxios),
-      userService: new UserService(this._privateAxios),
+      auth: new AuthService(this._publicAxios),
+      user: new UserService(this._privateAxios),
     }
   }
 
@@ -48,7 +48,7 @@ export class HttpClient {
     return this._instance
   }
 
-  private services(): Services {
+  public services(): Services {
     return this._services
   }
 }
