@@ -1,4 +1,9 @@
 {
+  "name": "snsl",
+  "version": "0.0.1",
+  "description": "Service layer for Front-end",
+  "author": "Swiss L.",
+  "license": "ISC",
   "devDependencies": {
     "@types/node": "20.12.7",
     "gts": "^5.3.1",
