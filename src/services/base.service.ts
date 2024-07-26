@@ -1,14 +1,25 @@
 import { GenericDeserialize } from 'cerialize'
 
 export class BaseService {
-  protected getResult<T>(cnstr: new () => T, json: any): T {
+  protected getResult<T>(json: any, cnstr: new () => T): T {
     return GenericDeserialize<T>(json, cnstr)
   }
 
-  protected getResults<T>(cnstr: new () => T, jsonArray: any[]): T[] {
+  protected getResults<T>(jsonArray: any[], cnstr?: new () => T): T[] {
     const result: T[] = []
     for (const json of jsonArray) {
-      result.push(GenericDeserialize<T>(json, cnstr))
+      if (
+        typeof json === 'string' ||
+        typeof json === 'number' ||
+        typeof json === 'boolean'
+      ) {
+        result.push(json as T)
+        continue
+      }
+
+      if (cnstr) {
+        result.push(GenericDeserialize<T>(json, cnstr))
+      }
     }
     return result
   }

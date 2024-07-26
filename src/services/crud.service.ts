@@ -13,14 +13,14 @@ export class CrudService<T> extends BaseService {
   protected async index(): Promise<{ items: T[]; count: number }> {
     const response = await this.axios.get(`/${this.resourceKey}`)
     return {
-      items: this.getResults(this.cnstr, response.data.items),
+      items: this.getResults(response.data.items, this.cnstr),
       count: response.data.count,
     }
   }
 
   protected async getOne(id: string | number): Promise<T> {
     const response = await this.axios.get(`/${this.resourceKey}/${id}`)
-    return this.getResult(this.cnstr, response.data)
+    return this.getResult(response.data, this.cnstr)
   }
 
   protected async deleteOne(id: string | number): Promise<void> {
@@ -35,11 +35,18 @@ export class CrudService<T> extends BaseService {
       `/${this.resourceKey}/${id}`,
       entity,
     )
-    return this.getResult(this.cnstr, response.data)
+    return this.getResult(response.data, this.cnstr)
   }
 
   protected async createOne(entity: T): Promise<T> {
     const response = await this.axios.post(`/${this.resourceKey}`, entity)
-    return this.getResult(this.cnstr, response.data)
+    return this.getResult(response.data, this.cnstr)
+  }
+
+  protected async lov<S>(column: keyof T): Promise<S[]> {
+    const response = await this.axios.get(
+      `/${this.resourceKey}/_lov/${column.toString()}`,
+    )
+    return this.getResults<S>(response.data)
   }
 }
